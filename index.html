@@ -1,103 +1,82 @@
 <!DOCTYPE html>
-  <html lang="fr">
-    <head>
-      <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
-    </head>
-    <body>
-    <a-scene>
-        <a-assets>
-          <a-assets-item id="global">
-            <a-assets-item id="table" src="assets/object/classic_round_side_table.glb" ></a-assets-item>
-            <a-assets-item id="mobile1" src="assets/object/mobile1.glb"></a-assets-item>
-            <a-assets-item id="mobile2" src="assets/object/mobile2.glb"></a-assets-item>
-            <a-assets-item id="mobile3" src="assets/object/mobile3.glb"></a-assets-item>
-           <!-- <a-assets-item id="pillow" src="assets/object/pillow.glb"></a-assets-item>-->
-            <video id="video1" src="assets/films/Temoin1extra.mp4" autoplay loop="true" src="penguin-sledding.mp4"></video>
+<html lang="fr">
+  <head>
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
 
-                     
-          </a-assets-item>
-        </a-assets>
+    <script>
+      AFRAME.registerComponent('play-on-look', {
+        init: function () {
+          var el = this.el;
+          el.addEventListener('mouseenter', function () {
+            var video = document.querySelector('#video1');
+            if (video) video.play();
+          });
+          el.addEventListener('mouseleave', function () {
+            var video = document.querySelector('#video1');
+            if (video) video.pause();
+          });
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    <a-scene>
+
+      <a-assets>
+        <a-asset-item id="table" src="assets/object/classic_round_side_table.glb"></a-asset-item>
+        <a-asset-item id="mobile1" src="assets/object/mobile1.glb"></a-asset-item>
+        <a-asset-item id="mobile2" src="assets/object/mobile2.glb"></a-asset-item>
+        <a-asset-item id="mobile3" src="assets/object/mobile3.glb"></a-asset-item>
+
+        <video id="video1"
+               src="assets/films/Temoin1extra.mp4"
+               playsinline
+               crossorigin="anonymous">
+        </video>
+      </a-assets>
+
+      <a-entity camera look-controls>
+        <a-entity cursor="fuse: true; fuseTimeout: 800"
+                  raycaster="objects: .playable"
+                  position="0 0 -1"
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                  material="shader: flat; color: white">
+        </a-entity>
+      </a-entity>
+
       <a-entity id="global">
         <a-entity id="table" gltf-model="#table" scale="3 0.21914 3" position="0 0.22454 0"></a-entity>
-<a-entity id="telephone" position="0 0.33236 0" scale="0.5 0.5 0.5">
-        <a-entity id="mobile1" gltf-model="assets/object/mobile1.glb" scale="0.1 0.08076 0.1" position="-0.05093 1.8343 0.2881" rotation="0 -56.749750734322646 0"></a-entity>
-        <a-entity id="mobile2" gltf-model="assets/object/mobile2.glb" scale="0.01 0.01 0.01" position="0.09615 1.87665 -0.0558"></a-entity>
-        <a-entity id="mobile3" gltf-model="assets/object/mobile3.glb" position="0.48662 1.82716 0.40181" scale="0.5 0.5 0.39934" rotation="90.00021045914971 -120.43171783193311 0"></a-entity>
+
+        <a-entity id="telephone" position="0 0.33236 0" scale="0.5 0.5 0.5">
+          <a-entity id="mobile1" gltf-model="#mobile1"
+                    scale="0.1 0.08076 0.1"
+                    position="-0.05093 1.8343 0.2881"
+                    rotation="0 -56.75 0">
+          </a-entity>
+
+          <a-entity id="mobile2" gltf-model="#mobile2"
+                    scale="0.01 0.01 0.01"
+                    position="0.09615 1.87665 -0.0558">
+          </a-entity>
+
+          <a-entity id="mobile3" gltf-model="#mobile3"
+                    position="0.48662 1.82716 0.40181"
+                    scale="0.5 0.5 0.39934"
+                    rotation="90 -120.43 0">
+          </a-entity>
+        </a-entity>
       </a-entity>
-        <!--<a-entity id="pillow" gltf-model="#pillow"></a-entity>-->
-  </a-entity>
-      <a-video>
-      <a-video src="#video1" width="16" height="9" position="0 0 -20"></a-video>
 
-
-
-        
+      <a-video id="videopanel"
+               class="playable"
+               play-on-look
+               src="#video1"
+               width="16"
+               height="9"
+               position="0 3 -15">
       </a-video>
 
-
-      
     </a-scene>
-
-      <!--
-
-
-                                                                                                DANGER ZONE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      -->
-
-    </body>
+  </body>
+</html>
