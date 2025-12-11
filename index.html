@@ -49,14 +49,14 @@
         </video>
       </a-assets>
 
-      <!-- CAMÉRA + CURSEUR CENTRÉ -->
+      
 
         <a-entity camera="" look-controls="" position="0.11407 1.67185 4.90269" rotation="-52.368342474957274 -7.333859777674539 0">
         <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 800" raycaster="objects: .playable" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" material="shader: flat; color: #ff1111"></a-entity>
       </a-entity>
 
-      <!-- OBJETS -->
-      <a-entity id="global" scale="3 0.21914 3" position="0 0.86799 0">
+ 
+      <a-entity id="global"  position="0 0.86799 0">
         <a-entity gltf-model="#table" scale="3 0.21914 3" position="0 0.86799 0"></a-entity>
         
 
@@ -74,13 +74,13 @@
         </a-entity>
       </a-entity>
 
-      <!-- VIDÉO LISIBLE PAR REGARD -->
+
  <a-video id="videopanel" class="playable" play-on-look="" src="#video1" width="16" height="9" position="0.01489 1.24963 2.9356" scale="0.01335 0.05344 0.1" <="" a-video=""></a-video>
 
 
     </a-scene>
 
-    <!-- Script d’activation audio -->
+
     <script>
       document.querySelector('#startAudio').addEventListener('click', function () {
         var video = document.querySelector('#video1');
@@ -133,7 +133,7 @@
 
 
 
-
+scale="3 0.21914 3"
 
 
 
