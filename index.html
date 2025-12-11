@@ -3,6 +3,7 @@
 <head>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.7/dist/aframe-environment-component.min.js"></script>
 
     <!-- Composant générique : joue/stoppe la vidéo liée -->
     <script>
@@ -42,21 +43,30 @@
             <video id="video3" src="assets/films/Temoin3extra.mp4" playsinline crossorigin="anonymous"></video>
         </a-assets>
 
-<a-entity id="pivot" position="0 1.6 0">
-    <a-entity camera look-controls position="0 0 4.41422">
-        <a-entity id="cursor" 
-                  cursor="fuse: true; fuseTimeout: 800" 
-                  raycaster="objects: .playable" 
-                  position="0 0 -1" 
-                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" 
-                  material="shader: flat; color: #ff1111">
-        </a-entity>
-    </a-entity>
-</a-entity>
-
+        <!-- Pivot de caméra pour rotation si nécessaire -->
+        <a-entity id="cameraPivot" position="0 1.6 0">
+            <a-entity camera look-controls position="0 0 4.41422">
+                <a-entity id="cursor" 
+                          cursor="fuse: true; fuseTimeout: 800" 
+                          raycaster="objects: .playable" 
+                          position="0 0 -1" 
+                          geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" 
+                          material="shader: flat; color: #ff1111">
+                </a-entity>
             </a-entity>
         </a-entity>
 
+        <!-- Bouton flèche en bas au centre -->
+        <a-entity id="arrowButton" 
+                  geometry="primitive: plane; width: 0.4; height: 0.4" 
+                  material="color: yellow; shader: flat" 
+                  position="0 -1 -1.5" 
+                  rotation="-90 0 0"
+                  class="clickable">
+            <a-text value="↓" align="center" color="black" position="0 0 0.01" width="2"></a-text>
+        </a-entity>
+
+        <!-- Table et mobiles -->
         <a-entity id="global" position="0 0.02 3.143">
             <a-entity gltf-model="#table" scale="3 0.22 3" position="0 0.86 0"></a-entity>
 
@@ -96,7 +106,7 @@
             </a-entity>
         </a-entity>
 
-        <!-- Écrans vidéo (tous corrects et indépendants) -->
+        <!-- Écrans vidéo -->
         <a-video id="video1" 
                  class="playable" 
                  play-on-look="video: #video1" 
@@ -117,14 +127,6 @@
                  rotation="0 59.64 0" 
                  scale="0.018 0.053 0.1">
         </a-video>
-
-        <a-entity id="arrowButton" 
-          geometry="primitive: plane; height: 0.3; width: 0.3"
-          material="color: yellow; shader: flat"
-          position="0 0 -1"
-          rotation="0 0 0"
-          class="clickable">
-</a-entity>
     </a-scene>
 
     <!-- Script pour débloquer l’audio -->
@@ -134,20 +136,44 @@
                 const v = document.querySelector(id);
                 v.muted = false;
                 v.play().catch(() => {});
-                v.pause(); // on ne lance pas la vidéo, on débloque juste le son
+                v.pause(); // débloque juste le son
             });
             this.style.display = 'none';
         });
     </script>
-    <script>
-  const pivot = document.querySelector('#pivot');
-  function rotatePivot() {
-      pivot.object3D.rotation.y += 0.005; // vitesse de rotation
-      requestAnimationFrame(rotatePivot);
-  }
-  rotatePivot();
-</script>
 
+    <!-- Script pour faire tourner la caméra vers video1 au clic -->
+    <script>
+        const arrowButton = document.querySelector('#arrowButton');
+        const camera = document.querySelector('[camera]');
+        const target = document.querySelector('#video1');
+
+        arrowButton.addEventListener('click', () => {
+            const targetPos = new THREE.Vector3();
+            target.object3D.getWorldPosition(targetPos);
+
+            const camObj = camera.object3D;
+            const startRot = camObj.rotation.clone();
+
+            // Oriente directement la caméra vers target
+            camObj.lookAt(targetPos);
+            const endRot = camObj.rotation.clone();
+            camObj.rotation.copy(startRot);
+
+            const duration = 1000; // durée animation en ms
+            const startTime = performance.now();
+
+            function animate() {
+                const now = performance.now();
+                const t = Math.min((now - startTime) / duration, 1);
+                camObj.rotation.x = startRot.x + (endRot.x - startRot.x) * t;
+                camObj.rotation.y = startRot.y + (endRot.y - startRot.y) * t;
+                camObj.rotation.z = startRot.z + (endRot.z - startRot.z) * t;
+                if (t < 1) requestAnimationFrame(animate);
+            }
+            animate();
+        });
+    </script>
 </body>
 </html>
 
@@ -225,7 +251,7 @@
 
 
 
-
+ <script src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.7/dist/aframe-environment-component.min.js"></script>
 
 
 
