@@ -5,6 +5,24 @@
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
+    <script>
+        AFRAME.registerComponent('play-on-look', {
+            schema: { video: { type: 'selector' } },
+            init: function () {
+                const vid = this.data.video;
+                const el = this.el;
+
+                el.addEventListener('mouseenter', () => {
+                    if (vid && vid.paused) vid.play();
+                });
+
+                el.addEventListener('mouseleave', () => {
+                    if (vid && !vid.paused) vid.pause();
+                });
+            }
+        });
+    </script>
+
     <style>
         body { margin: 0; overflow: hidden; }
         #loading-screen {
@@ -22,19 +40,6 @@
             font-family: Arial, sans-serif;
             z-index: 1000;
         }
-        #status {
-            margin-top: 20px;
-            font-size: 16px;
-            text-align: center;
-            padding: 0 20px;
-        }
-        #error-msg {
-            color: #ff4444;
-            margin-top: 20px;
-            max-width: 80%;
-            text-align: center;
-            font-size: 14px;
-        }
         .spinner {
             border: 4px solid #333;
             border-top: 4px solid white;
@@ -42,187 +47,220 @@
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
+            margin-bottom: 20px;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        #skip-btn {
+        #start-button {
             margin-top: 30px;
-            padding: 10px 20px;
-            background: #444;
+            padding: 15px 30px;
+            background: #4CAF50;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 18px;
+            font-weight: bold;
         }
-        #skip-btn:hover {
-            background: #666;
+        #start-button:hover {
+            background: #45a049;
         }
     </style>
 </head>
 <body>
     <div id="loading-screen">
         <div class="spinner"></div>
-        <div id="status">Chargement de MindAR...</div>
-        <div id="error-msg"></div>
-        <button id="skip-btn" style="display: none;">Forcer le démarrage</button>
+        <div id="status">Prêt à démarrer l'AR</div>
+        <button id="start-button">DÉMARRER LA RÉALITÉ AUGMENTÉE</button>
     </div>
 
     <a-scene 
-        mindar-image="imageTargetSrc: ./assets/targets-cpge.mind; autoStart: false; filterMinCF: 0.0001; filterBeta: 0.001;" 
+        mindar-image="imageTargetSrc: ./assets/targets-cpge.mind; autoStart: false; uiScanning: no; uiLoading: no; uiError: no;" 
         embedded 
         color-space="sRGB" 
         vr-mode-ui="enabled: false" 
         device-orientation-permission-ui="enabled: false">
         
-        <a-assets timeout="10000">
-            <!-- Chargement conditionnel des assets -->
+        <a-assets>
+            <a-asset-item id="table" src="assets/object/classic_round_side_table.glb"></a-asset-item>
+            <a-asset-item id="mobile1" src="assets/object/mobile1.glb"></a-asset-item>
+            <a-asset-item id="mobile2" src="assets/object/mobile2.glb"></a-asset-item>
+            <a-asset-item id="mobile3" src="assets/object/mobile3.glb"></a-asset-item>
+            
+            <img id="frise" src="assets/object/frise.jpg">
+
+            <video id="video1" src="assets/films/Temoin1extra.mp4" playsinline webkit-playsinline crossorigin="anonymous" preload="metadata" muted></video>
+            <video id="video2" src="assets/films/Temoin2extra.mp4" playsinline webkit-playsinline crossorigin="anonymous" preload="metadata" muted></video>
+            <video id="video3" src="assets/films/Temoin3extra.mp4" playsinline webkit-playsinline crossorigin="anonymous" preload="metadata" muted></video>
         </a-assets>
 
-        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+        <a-camera position="0 0 0" look-controls="enabled: false">
+            <a-entity id="cursor" 
+                      cursor="fuse: true; fuseTimeout: 800" 
+                      raycaster="objects: .playable; far: 20" 
+                      position="0 0 -1" 
+                      geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" 
+                      material="shader: flat; color: #ff1111">
+            </a-entity>
+        </a-camera>
 
         <a-entity mindar-image-target="targetIndex: 0">
-            <a-plane color="#00FF00" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0"></a-plane>
-            <a-text value="AR fonctionne!" position="0 0.3 0" color="#000" align="center" scale="0.5 0.5 0.5"></a-text>
+            <a-entity id="global" position="0 0 0">
+                <a-image src="#frise" position="0 0.5 0" scale="1.5 1.5 1"></a-image>
+                
+                <a-entity gltf-model="#table" scale="1.27891 0.23741 1.22012" position="0 0.86 0"></a-entity>
+
+                <a-entity position="0 0.33 0" scale="0.5 0.5 0.5">
+                    
+                    <a-entity id="tel1+video3">
+                        <a-entity id="telephone1" gltf-model="#mobile1" scale="0.1 0.08 0.1" position="-0.05 1.83 0.28" rotation="0 -56.7 0"></a-entity>
+                        <a-video 
+                            class="playable" 
+                            play-on-look="video: #video3" 
+                            src="#video3" 
+                            width="16" 
+                            height="9" 
+                            position="-0.08441 1.798 0.29972" 
+                            rotation="0 -56.876 0" 
+                            scale="0.03417 0.08137 0.1">
+                        </a-video>
+                    </a-entity>
+
+                    <a-entity id="tel2+video1">
+                        <a-entity id="telephone2" gltf-model="#mobile2" scale="0.01 0.01 0.01" position="0.096 1.87 -0.05"></a-entity>
+                        <a-video 
+                            class="playable" 
+                            play-on-look="video: #video1" 
+                            src="#video1" 
+                            width="16" 
+                            height="9" 
+                            position="0.10304 1.80643 -0.04651" 
+                            scale="0.02967 0.10104 0.1">
+                        </a-video>
+                    </a-entity>
+
+                    <a-entity id="tel3+video2">
+                        <a-entity id="telephone3" gltf-model="#mobile3" scale="0.5 0.5 0.39" position="0.48 1.82 0.40" rotation="90 -120 0"></a-entity>
+                        <a-video 
+                            class="playable" 
+                            play-on-look="video: #video2" 
+                            src="#video2" 
+                            width="16" 
+                            height="9" 
+                            position="0.30405 1.81499 0.30805" 
+                            rotation="0 59.64 0" 
+                            scale="0.03591 0.10571 0.1">
+                        </a-video>
+                    </a-entity>
+                </a-entity>
+            </a-entity>
         </a-entity>
     </a-scene>
 
     <script>
-        const statusDiv = document.querySelector('#status');
-        const errorDiv = document.querySelector('#error-msg');
         const loadingScreen = document.querySelector('#loading-screen');
-        const skipBtn = document.querySelector('#skip-btn');
+        const statusDiv = document.querySelector('#status');
+        const startButton = document.querySelector('#start-button');
         const sceneEl = document.querySelector('a-scene');
         
-        let startAttempted = false;
-        let loadingTimeout;
+        let arStarted = false;
 
-        function updateStatus(msg) {
-            console.log('[STATUS]', msg);
-            statusDiv.textContent = msg;
-        }
+        // Démarrage sur clic utilisateur
+        startButton.addEventListener('click', async () => {
+            if (arStarted) return;
+            arStarted = true;
 
-        function showError(msg) {
-            console.error('[ERROR]', msg);
-            errorDiv.innerHTML = `❌ ${msg}<br><br>Vérifications:<br>
-            • Le fichier targets-cpge.mind existe dans ./assets/ ?<br>
-            • Vous êtes en HTTPS ou localhost ?<br>
-            • La console montre des erreurs ?`;
-            skipBtn.style.display = 'block';
-        }
+            startButton.disabled = true;
+            startButton.textContent = 'Démarrage...';
+            statusDiv.textContent = 'Initialisation de la caméra AR...';
 
-        function hideLoading() {
-            clearTimeout(loadingTimeout);
-            loadingScreen.style.display = 'none';
-        }
+            try {
+                // Attendre que la scène soit complètement chargée
+                if (!sceneEl.hasLoaded) {
+                    await new Promise(resolve => {
+                        sceneEl.addEventListener('loaded', resolve, { once: true });
+                    });
+                }
 
-        // Timeout de sécurité à 10 secondes
-        loadingTimeout = setTimeout(() => {
-            if (!startAttempted) {
-                showError('Le fichier targets-cpge.mind ne se charge pas');
-            } else {
-                showError('MindAR ne démarre pas (timeout 10s)');
-            }
-        }, 10000);
+                // Démarrer MindAR
+                const arSystem = sceneEl.systems['mindar-image-system'];
+                
+                if (!arSystem) {
+                    throw new Error('Système MindAR introuvable');
+                }
 
-        // 1. Vérifier le fichier .mind
-        updateStatus('Vérification du fichier targets-cpge.mind...');
-        
-        fetch('./assets/targets-cpge.mind', { method: 'HEAD' })
-            .then(response => {
-                if (!response.ok) throw new Error('Fichier introuvable');
-                updateStatus('✓ Fichier .mind trouvé');
-                return checkCamera();
-            })
-            .catch(err => {
-                showError(`Fichier ./assets/targets-cpge.mind introuvable`);
-            });
-
-        // 2. Vérifier l'accès caméra
-        function checkCamera() {
-            updateStatus('Demande d\'accès à la caméra...');
-            
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                .then(stream => {
-                    updateStatus('✓ Accès caméra accordé');
-                    stream.getTracks().forEach(track => track.stop());
-                    return initScene();
-                })
-                .catch(err => {
-                    showError('Accès caméra refusé. Autorisez la caméra et rechargez.');
+                statusDiv.textContent = 'Démarrage du tracking AR...';
+                
+                await arSystem.start();
+                
+                statusDiv.textContent = '✓ AR active ! Pointez vers votre marqueur';
+                
+                // Activer le son des vidéos
+                ['#video1', '#video2', '#video3'].forEach(id => {
+                    const vid = document.querySelector(id);
+                    if (vid) {
+                        vid.muted = false;
+                    }
                 });
-        }
 
-        // 3. Initialiser la scène
-        function initScene() {
-            updateStatus('Initialisation de la scène A-Frame...');
-
-            sceneEl.addEventListener('loaded', () => {
-                updateStatus('✓ Scène chargée, démarrage MindAR...');
-                startMindAR();
-            });
-
-            // Si la scène est déjà chargée
-            if (sceneEl.hasLoaded) {
-                updateStatus('✓ Scène déjà chargée, démarrage MindAR...');
-                startMindAR();
-            }
-        }
-
-        // 4. Démarrer MindAR
-        function startMindAR() {
-            startAttempted = true;
-            
-            const arSystem = sceneEl.systems['mindar-image-system'];
-            
-            if (!arSystem) {
-                showError('Système MindAR introuvable (script non chargé?)');
-                return;
-            }
-
-            updateStatus('Démarrage du tracking AR...');
-
-            arSystem.start().then(() => {
-                clearTimeout(loadingTimeout);
-                updateStatus('✓ MindAR actif! Pointez vers votre marqueur.');
-                
+                // Cacher l'écran de chargement après 1 seconde
                 setTimeout(() => {
-                    hideLoading();
+                    loadingScreen.style.display = 'none';
                 }, 1000);
-                
-            }).catch(err => {
-                showError(`Erreur MindAR: ${err.message || err}`);
-                console.error('Erreur complète:', err);
-            });
-        }
 
-        // Bouton pour forcer le démarrage
-        skipBtn.addEventListener('click', () => {
-            console.log('[FORCE] Tentative de démarrage forcé');
-            hideLoading();
-            if (!startAttempted) {
-                startMindAR();
+            } catch (error) {
+                console.error('Erreur au démarrage:', error);
+                statusDiv.textContent = '❌ Erreur: ' + error.message;
+                startButton.textContent = 'RÉESSAYER';
+                startButton.disabled = false;
+                arStarted = false;
             }
         });
 
-        // Log toutes les erreurs
-        window.addEventListener('error', (e) => {
-            console.error('[WINDOW ERROR]', e.message, e.filename, e.lineno);
+        // Logs utiles
+        sceneEl.addEventListener('arReady', () => {
+            console.log('✓ MindAR prêt');
         });
 
         sceneEl.addEventListener('arError', (e) => {
-            console.error('[AR ERROR]', e.detail);
-            showError('Erreur AR: ' + JSON.stringify(e.detail));
+            console.error('❌ Erreur AR:', e.detail);
         });
 
-        sceneEl.addEventListener('arReady', () => {
-            console.log('[AR READY] MindAR est prêt');
-        });
+        // Gestion de la détection du marqueur
+        const target = document.querySelector('[mindar-image-target]');
+        if (target) {
+            target.addEventListener('targetFound', () => {
+                console.log('✓ Marqueur détecté !');
+            });
+            
+            target.addEventListener('targetLost', () => {
+                console.log('⚠ Marqueur perdu');
+            });
+        }
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!--
                                                             ZONE DE DECOUPAGE 
 
