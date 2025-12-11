@@ -42,13 +42,18 @@
             <video id="video3" src="assets/films/Temoin3extra.mp4" playsinline crossorigin="anonymous"></video>
         </a-assets>
 
-        <a-entity camera look-controls position="0 1.6 4.41422" rotation="-0.802 -0.573 0">
-            <a-entity id="cursor" 
-                      cursor="fuse: true; fuseTimeout: 800" 
-                      raycaster="objects: .playable" 
-                      position="0 0 -1" 
-                      geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" 
-                      material="shader: flat; color: #ff1111">
+<a-entity id="pivot" position="0 1.6 0">
+    <a-entity camera look-controls position="0 0 4.41422">
+        <a-entity id="cursor" 
+                  cursor="fuse: true; fuseTimeout: 800" 
+                  raycaster="objects: .playable" 
+                  position="0 0 -1" 
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" 
+                  material="shader: flat; color: #ff1111">
+        </a-entity>
+    </a-entity>
+</a-entity>
+
             </a-entity>
         </a-entity>
 
@@ -126,6 +131,15 @@
             this.style.display = 'none';
         });
     </script>
+    <script>
+  const pivot = document.querySelector('#pivot');
+  function rotatePivot() {
+      pivot.object3D.rotation.y += 0.005; // vitesse de rotation
+      requestAnimationFrame(rotatePivot);
+  }
+  rotatePivot();
+</script>
+
 </body>
 </html>
 
