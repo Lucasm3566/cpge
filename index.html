@@ -3,6 +3,280 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+            padding: 0 20px;
+        }
+        #error-msg {
+            color: #ff4444;
+            margin-top: 20px;
+            max-width: 80%;
+            text-align: center;
+            font-size: 14px;
+        }
+        .spinner {
+            border: 4px solid #333;
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #skip-btn {
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        #skip-btn:hover {
+            background: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <div id="status">Chargement de MindAR...</div>
+        <div id="error-msg"></div>
+        <button id="skip-btn" style="display: none;">Forcer le démarrage</button>
+    </div>
+
+    <a-scene 
+        mindar-image="imageTargetSrc: ./assets/targets-cpge.mind; autoStart: false; filterMinCF: 0.0001; filterBeta: 0.001;" 
+        embedded 
+        color-space="sRGB" 
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false">
+        
+        <a-assets timeout="10000">
+            <!-- Chargement conditionnel des assets -->
+        </a-assets>
+
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <a-entity mindar-image-target="targetIndex: 0">
+            <a-plane color="#00FF00" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0"></a-plane>
+            <a-text value="AR fonctionne!" position="0 0.3 0" color="#000" align="center" scale="0.5 0.5 0.5"></a-text>
+        </a-entity>
+    </a-scene>
+
+    <script>
+        const statusDiv = document.querySelector('#status');
+        const errorDiv = document.querySelector('#error-msg');
+        const loadingScreen = document.querySelector('#loading-screen');
+        const skipBtn = document.querySelector('#skip-btn');
+        const sceneEl = document.querySelector('a-scene');
+        
+        let startAttempted = false;
+        let loadingTimeout;
+
+        function updateStatus(msg) {
+            console.log('[STATUS]', msg);
+            statusDiv.textContent = msg;
+        }
+
+        function showError(msg) {
+            console.error('[ERROR]', msg);
+            errorDiv.innerHTML = `❌ ${msg}<br><br>Vérifications:<br>
+            • Le fichier targets-cpge.mind existe dans ./assets/ ?<br>
+            • Vous êtes en HTTPS ou localhost ?<br>
+            • La console montre des erreurs ?`;
+            skipBtn.style.display = 'block';
+        }
+
+        function hideLoading() {
+            clearTimeout(loadingTimeout);
+            loadingScreen.style.display = 'none';
+        }
+
+        // Timeout de sécurité à 10 secondes
+        loadingTimeout = setTimeout(() => {
+            if (!startAttempted) {
+                showError('Le fichier targets-cpge.mind ne se charge pas');
+            } else {
+                showError('MindAR ne démarre pas (timeout 10s)');
+            }
+        }, 10000);
+
+        // 1. Vérifier le fichier .mind
+        updateStatus('Vérification du fichier targets-cpge.mind...');
+        
+        fetch('./assets/targets-cpge.mind', { method: 'HEAD' })
+            .then(response => {
+                if (!response.ok) throw new Error('Fichier introuvable');
+                updateStatus('✓ Fichier .mind trouvé');
+                return checkCamera();
+            })
+            .catch(err => {
+                showError(`Fichier ./assets/targets-cpge.mind introuvable`);
+            });
+
+        // 2. Vérifier l'accès caméra
+        function checkCamera() {
+            updateStatus('Demande d\'accès à la caméra...');
+            
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    updateStatus('✓ Accès caméra accordé');
+                    stream.getTracks().forEach(track => track.stop());
+                    return initScene();
+                })
+                .catch(err => {
+                    showError('Accès caméra refusé. Autorisez la caméra et rechargez.');
+                });
+        }
+
+        // 3. Initialiser la scène
+        function initScene() {
+            updateStatus('Initialisation de la scène A-Frame...');
+
+            sceneEl.addEventListener('loaded', () => {
+                updateStatus('✓ Scène chargée, démarrage MindAR...');
+                startMindAR();
+            });
+
+            // Si la scène est déjà chargée
+            if (sceneEl.hasLoaded) {
+                updateStatus('✓ Scène déjà chargée, démarrage MindAR...');
+                startMindAR();
+            }
+        }
+
+        // 4. Démarrer MindAR
+        function startMindAR() {
+            startAttempted = true;
+            
+            const arSystem = sceneEl.systems['mindar-image-system'];
+            
+            if (!arSystem) {
+                showError('Système MindAR introuvable (script non chargé?)');
+                return;
+            }
+
+            updateStatus('Démarrage du tracking AR...');
+
+            arSystem.start().then(() => {
+                clearTimeout(loadingTimeout);
+                updateStatus('✓ MindAR actif! Pointez vers votre marqueur.');
+                
+                setTimeout(() => {
+                    hideLoading();
+                }, 1000);
+                
+            }).catch(err => {
+                showError(`Erreur MindAR: ${err.message || err}`);
+                console.error('Erreur complète:', err);
+            });
+        }
+
+        // Bouton pour forcer le démarrage
+        skipBtn.addEventListener('click', () => {
+            console.log('[FORCE] Tentative de démarrage forcé');
+            hideLoading();
+            if (!startAttempted) {
+                startMindAR();
+            }
+        });
+
+        // Log toutes les erreurs
+        window.addEventListener('error', (e) => {
+            console.error('[WINDOW ERROR]', e.message, e.filename, e.lineno);
+        });
+
+        sceneEl.addEventListener('arError', (e) => {
+            console.error('[AR ERROR]', e.detail);
+            showError('Erreur AR: ' + JSON.stringify(e.detail));
+        });
+
+        sceneEl.addEventListener('arReady', () => {
+            console.log('[AR READY] MindAR est prêt');
+        });
+    </script>
+</body>
+</html>
+<!--
+                                                            ZONE DE DECOUPAGE 
+
+
+
+
+
+
+
+
+<a-image src="#frise" material="blending: subtractive" position="0.01741 0.977 0.04519" rotation="-89.99047017663248 0 0" scale="1.98057 1.07929 1"></a-image>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
@@ -240,56 +514,6 @@
     </script>
 </body>
 </html>
-<!--
-                                                            ZONE DE DECOUPAGE 
-
-
-
-
-
-
-
-
-<a-image src="#frise" material="blending: subtractive" position="0.01741 0.977 0.04519" rotation="-89.99047017663248 0 0" scale="1.98057 1.07929 1"></a-image>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
