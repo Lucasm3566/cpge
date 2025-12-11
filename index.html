@@ -3,8 +3,10 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
+    <!-- Composant générique : joue/stoppe la vidéo liée -->
     <script>
         AFRAME.registerComponent('play-on-look', {
             schema: { video: { type: 'selector' } },
@@ -13,11 +15,15 @@
                 const el = this.el;
 
                 el.addEventListener('mouseenter', () => {
-                    if (vid && vid.paused) vid.play();
+                    if (vid && vid.paused) {
+                        vid.play().catch(e => console.log('Lecture vidéo:', e));
+                    }
                 });
 
                 el.addEventListener('mouseleave', () => {
-                    if (vid && !vid.paused) vid.pause();
+                    if (vid && !vid.paused) {
+                        vid.pause();
+                    }
                 });
             }
         });
@@ -70,10 +76,11 @@
     </style>
 </head>
 <body>
+    <!-- Écran de chargement -->
     <div id="loading-screen">
         <div class="spinner"></div>
         <div id="status">Prêt à démarrer l'AR</div>
-        <button id="start-button">DÉMARRER LA RÉALITÉ AUGMENTÉE</button>
+        <button id="start-button">Cliquer pour commencer</button>
     </div>
 
     <a-scene 
@@ -96,6 +103,7 @@
             <video id="video3" src="assets/films/Temoin3extra.mp4" playsinline webkit-playsinline crossorigin="anonymous" preload="metadata" muted></video>
         </a-assets>
 
+        <!-- Caméra avec curseur -->
         <a-camera position="0 0 0" look-controls="enabled: false">
             <a-entity id="cursor" 
                       cursor="fuse: true; fuseTimeout: 800" 
@@ -106,31 +114,36 @@
             </a-entity>
         </a-camera>
 
+        <!-- Contenu AR -->
         <a-entity mindar-image-target="targetIndex: 0">
-            <a-entity id="global" position="0 0 0">
-                <a-image src="#frise" position="0 0.5 0" scale="1.5 1.5 1"></a-image>
+            <a-entity id="global" position="0 0.02 3.143">
+                <a-image src="#frise"></a-image>
                 
-                <a-entity gltf-model="#table" scale="1.27891 0.23741 1.22012" position="0 0.86 0"></a-entity>
+                <a-entity gltf-model="assets/object/classic_round_side_table.glb" scale="1.27891 0.23741 1.22012" position="0 0.86 0"></a-entity>
 
                 <a-entity position="0 0.33 0" scale="0.5 0.5 0.5">
                     
+                    <!-- Téléphone 1 + Vidéo 3 -->
                     <a-entity id="tel1+video3">
                         <a-entity id="telephone1" gltf-model="#mobile1" scale="0.1 0.08 0.1" position="-0.05 1.83 0.28" rotation="0 -56.7 0"></a-entity>
                         <a-video 
+                            id="video3-entity"
                             class="playable" 
                             play-on-look="video: #video3" 
                             src="#video3" 
                             width="16" 
                             height="9" 
                             position="-0.08441 1.798 0.29972" 
-                            rotation="0 -56.876 0" 
+                            rotation="0 -56.87580144925143 0" 
                             scale="0.03417 0.08137 0.1">
                         </a-video>
                     </a-entity>
 
+                    <!-- Téléphone 2 + Vidéo 1 -->
                     <a-entity id="tel2+video1">
                         <a-entity id="telephone2" gltf-model="#mobile2" scale="0.01 0.01 0.01" position="0.096 1.87 -0.05"></a-entity>
                         <a-video 
+                            id="video1-entity"
                             class="playable" 
                             play-on-look="video: #video1" 
                             src="#video1" 
@@ -141,16 +154,18 @@
                         </a-video>
                     </a-entity>
 
+                    <!-- Téléphone 3 + Vidéo 2 -->
                     <a-entity id="tel3+video2">
                         <a-entity id="telephone3" gltf-model="#mobile3" scale="0.5 0.5 0.39" position="0.48 1.82 0.40" rotation="90 -120 0"></a-entity>
                         <a-video 
+                            id="video2-entity"
                             class="playable" 
                             play-on-look="video: #video2" 
                             src="#video2" 
                             width="16" 
                             height="9" 
                             position="0.30405 1.81499 0.30805" 
-                            rotation="0 59.64 0" 
+                            rotation="0 59.64000000000001 0" 
                             scale="0.03591 0.10571 0.1">
                         </a-video>
                     </a-entity>
@@ -202,6 +217,11 @@
                     const vid = document.querySelector(id);
                     if (vid) {
                         vid.muted = false;
+                        // Pré-charger en lançant puis pausant
+                        vid.play().then(() => {
+                            vid.pause();
+                            vid.currentTime = 0;
+                        }).catch(e => console.log('Préchargement vidéo:', e));
                     }
                 });
 
