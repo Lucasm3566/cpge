@@ -63,15 +63,15 @@
         <a-entity gltf-model="#table" scale="3 0.22 3" position="0 0.86 0"></a-entity>
 
         <a-entity position="0 0.33 0" scale="0.5 0.5 0.5">
-          <a-entity gltf-model="#mobile1" scale="0.1 0.08 0.1" position="-0.05 1.83 0.28" rotation="0 -56.7 0"></a-entity>
-          <a-entity gltf-model="#mobile2" scale="0.01 0.01 0.01" position="0.096 1.87 -0.05"></a-entity>
-          <a-entity gltf-model="#mobile3" scale="0.5 0.5 0.39" position="0.48 1.82 0.40" rotation="90 -120 0"></a-entity>
+          <a-entity id="telephone1" gltf-model="#mobile1" scale="0.1 0.08 0.1" position="-0.05 1.83 0.28" rotation="0 -56.7 0"></a-entity>
+          <a-entity id="telephone2" gltf-model="#mobile2" scale="0.01 0.01 0.01" position="0.096 1.87 -0.05"></a-entity>
+          <a-entity id="telephone3" gltf-model="#mobile3" scale="0.5 0.5 0.39" position="0.48 1.82 0.40" rotation="90 -120 0"></a-entity>
         </a-entity>
       </a-entity>
 
       <!-- Écrans vidéo (tous corrects et indépendants) -->
 
-      <a-video id="panel1"
+      <a-video id="video1"
                class="playable"
                play-on-look="video: #video1"
                src="#video1"
@@ -80,7 +80,7 @@
                scale="0.013 0.053 0.1">
       </a-video>
 
-      <a-video id="panel2"
+      <a-video id="video2"
                class="playable"
                play-on-look="video: #video2"
                src="#video2"
@@ -90,7 +90,7 @@
                scale="0.018 0.053 0.1">
       </a-video>
 
-      <a-video id="panel3"
+      <a-video id="video3"
                class="playable"
                play-on-look="video: #video3"
                src="#video3"
