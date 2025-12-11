@@ -1,181 +1,133 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
+<head>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.7/dist/aframe-environment-component.min.js"></script>
 
     <!-- Composant générique : joue/stoppe la vidéo liée -->
     <script>
-      AFRAME.registerComponent('play-on-look', {
-        schema: {video: {type: 'selector'}},
+        AFRAME.registerComponent('play-on-look', {
+            schema: { video: { type: 'selector' } },
+            init: function () {
+                const vid = this.data.video;
+                const el = this.el;
 
-        init: function () {
-          const vid = this.data.video;
-          const el = this.el;
+                el.addEventListener('mouseenter', () => {
+                    if (vid) vid.play();
+                });
 
-          el.addEventListener('mouseenter', () => {
-            if (vid) vid.play();
-          });
-
-          el.addEventListener('mouseleave', () => {
-            if (vid) vid.pause();
-          });
-        }
-      });
+                el.addEventListener('mouseleave', () => {
+                    if (vid) vid.pause();
+                });
+            }
+        });
     </script>
-
-    <!-- Styles pour les flèches -->
-    <style>
-      #ui-arrows {
-        position: fixed;
-        bottom: 25px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 25px;
-        z-index: 9999;
-      }
-
-      .arrow-btn {
-        background: rgba(0, 0, 0, 0.55);
-        color: white;
-        padding: 12px 20px;
-        border-radius: 10px;
-        font-size: 26px;
-        font-weight: bold;
-        cursor: pointer;
-        user-select: none;
-        transition: background 0.2s, transform 0.2s;
-      }
-
-      .arrow-btn:hover {
-        background: rgba(0, 0, 0, 0.85);
-        transform: scale(1.1);
-      }
-    </style>
-  </head>
-
-  <body>
+</head>
+<body>
     <!-- Écran pour activer le son -->
-    <div id="startAudio"
-         style="position: fixed; top:0; left:0; width:100%; height:100%;
-                background:black; color:white; display:flex;
-                justify-content:center; align-items:center; font-size:28px;
-                cursor:pointer; z-index: 999;">
-      Cliquer pour commencer
-    </div>
-
-    <!-- Flèches centrées en bas -->
-    <div id="ui-arrows">
-      <div id="arrow-v1" class="arrow-btn">1</div>
-      <div id="arrow-v2" class="arrow-btn">2</div>
-      <div id="arrow-v3" class="arrow-btn">3</div>
+    <div id="startAudio" 
+         style="position: fixed; top:0; left:0; width:100%; height:100%; background:black; color:white; display:flex; justify-content:center; align-items:center; font-size:28px; cursor:pointer; z-index: 999;">
+        Cliquer pour commencer
     </div>
 
     <a-scene>
+        <a-assets>
+            <a-asset-item id="table" src="assets/object/classic_round_side_table.glb"></a-asset-item>
+            <a-asset-item id="mobile1" src="assets/object/mobile1.glb"></a-asset-item>
+            <a-asset-item id="mobile2" src="assets/object/mobile2.glb"></a-asset-item>
+            <a-asset-item id="mobile3" src="assets/object/mobile3.glb"></a-asset-item>
 
-      <a-assets>
-        <a-asset-item id="table" src="assets/object/classic_round_side_table.glb"></a-asset-item>
-        <a-asset-item id="mobile1" src="assets/object/mobile1.glb"></a-asset-item>
-        <a-asset-item id="mobile2" src="assets/object/mobile2.glb"></a-asset-item>
-        <a-asset-item id="mobile3" src="assets/object/mobile3.glb"></a-asset-item>
+            <video id="video1" src="assets/films/Temoin1extra.mp4" playsinline crossorigin="anonymous"></video>
+            <video id="video2" src="assets/films/Temoin2extra.mp4" playsinline crossorigin="anonymous"></video>
+            <video id="video3" src="assets/films/Temoin3extra.mp4" playsinline crossorigin="anonymous"></video>
+        </a-assets>
 
-        <video id="video1" src="assets/films/Temoin1extra.mp4" playsinline crossorigin="anonymous"></video>
-        <video id="video2" src="assets/films/Temoin2extra.mp4" playsinline crossorigin="anonymous"></video>
-        <video id="video3" src="assets/films/Temoin3extra.mp4" playsinline crossorigin="anonymous"></video>
-      </a-assets>
-
-      <!-- Caméra + curseur -->
-      <a-entity camera look-controls position="0 1.6 4.414" rotation="-0.8 -0.57 0">
-        <a-entity id="cursor"
-                  cursor="fuse: true; fuseTimeout: 800"
-                  raycaster="objects: .playable"
-                  position="0 0 -1"
-                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-                  material="shader: flat; color: #ff1111">
+        <a-entity camera look-controls position="0 1.6 4.41422" rotation="-0.802 -0.573 0">
+            <a-entity id="cursor" 
+                      cursor="fuse: true; fuseTimeout: 800" 
+                      raycaster="objects: .playable" 
+                      position="0 0 -1" 
+                      geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" 
+                      material="shader: flat; color: #ff1111">
+            </a-entity>
         </a-entity>
-      </a-entity>
 
-      <!-- Objets -->
-      <a-entity id="global" position="0 0.02 3.143">
-        <a-entity gltf-model="#table" scale="3 0.22 3" position="0 0.86 0"></a-entity>
+        <a-entity id="global" position="0 0.02 3.143">
+            <a-entity gltf-model="#table" scale="3 0.22 3" position="0 0.86 0"></a-entity>
 
-        <a-entity position="0 0.33 0" scale="0.5 0.5 0.5">
-          <a-entity id="tel1+video3">
-            <a-entity id="telephone1" gltf-model="#mobile1" scale="0.1 0.08 0.1" position="-0.05 1.83 0.28" rotation="0 -56.7 0"></a-entity>
-            <a-video id="video3" class="playable" play-on-look="video: #video3" src="#video3" width="16" height="9" position="-0.0437 1.265 3.298" rotation="0 -56.03 0" scale="0.017 0.053 0.1"> </a-video>
-          </a-entity>
+            <a-entity position="0 0.33 0" scale="0.5 0.5 0.5">
+                <a-entity id="tel1+video3">
+                    <a-entity id="telephone1" 
+                              gltf-model="#mobile1" 
+                              scale="0.1 0.08 0.1" 
+                              position="-0.05 1.83 0.28" 
+                              rotation="0 -56.7 0">
+                    </a-entity>
 
-          <a-entity id="telephone2" gltf-model="#mobile2" scale="0.01 0.01 0.01" position="0.096 1.87 -0.05"></a-entity>
-          <a-entity id="telephone3" gltf-model="#mobile3" scale="0.5 0.5 0.39" position="0.48 1.82 0.40" rotation="90 -120 0"></a-entity>
+                    <a-video id="video3" 
+                             class="playable" 
+                             play-on-look="video: #video3" 
+                             src="#video3" 
+                             width="16" 
+                             height="9" 
+                             position="-0.0437 1.265 3.298" 
+                             rotation="0 -56.03 0" 
+                             scale="0.017 0.053 0.1">
+                    </a-video>
+                </a-entity>
+
+                <a-entity id="telephone2" 
+                          gltf-model="#mobile2" 
+                          scale="0.01 0.01 0.01" 
+                          position="0.096 1.87 -0.05">
+                </a-entity>
+
+                <a-entity id="telephone3" 
+                          gltf-model="#mobile3" 
+                          scale="0.5 0.5 0.39" 
+                          position="0.48 1.82 0.40" 
+                          rotation="90 -120 0">
+                </a-entity>
+            </a-entity>
         </a-entity>
-      </a-entity>
 
-      <!-- Vidéos indépendantes -->
-      <a-video id="video1"
-               class="playable"
-               play-on-look="video: #video1"
-               src="#video1"
-               width="16" height="9"
-               position="0.049 1.26 3.117"
-               scale="0.013 0.053 0.1">
-      </a-video>
+        <!-- Écrans vidéo (tous corrects et indépendants) -->
+        <a-video id="video1" 
+                 class="playable" 
+                 play-on-look="video: #video1" 
+                 src="#video1" 
+                 width="16" 
+                 height="9" 
+                 position="0.049 1.26 3.117" 
+                 scale="0.013 0.053 0.1">
+        </a-video>
 
-      <a-video id="video2"
-               class="playable"
-               play-on-look="video: #video2"
-               src="#video2"
-               width="16" height="9"
-               position="0.1587 1.265 3.287"
-               rotation="0 59.64 0"
-               scale="0.018 0.053 0.1">
-      </a-video>
-
+        <a-video id="video2" 
+                 class="playable" 
+                 play-on-look="video: #video2" 
+                 src="#video2" 
+                 width="16" 
+                 height="9" 
+                 position="0.1587 1.265 3.287" 
+                 rotation="0 59.64 0" 
+                 scale="0.018 0.053 0.1">
+        </a-video>
     </a-scene>
 
     <!-- Script pour débloquer l’audio -->
     <script>
-      document.querySelector('#startAudio').addEventListener('click', function () {
-        ['#video1', '#video2', '#video3'].forEach(id => {
-          const v = document.querySelector(id);
-          v.muted = false;
-          v.play().catch(() => {});
-          v.pause(); // débloque juste le son
+        document.querySelector('#startAudio').addEventListener('click', function () {
+            ['#video1', '#video2', '#video3'].forEach(id => {
+                const v = document.querySelector(id);
+                v.muted = false;
+                v.play().catch(() => {});
+                v.pause(); // on ne lance pas la vidéo, on débloque juste le son
+            });
+            this.style.display = 'none';
         });
-        this.style.display = 'none';
-      });
     </script>
-
-    <!-- Script pour aligner la caméra sur une vidéo -->
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {
-        const cam = document.querySelector('[camera]');
-
-        function alignTo(angleY) {
-          let rot = cam.getAttribute('rotation');
-          rot.y = angleY;
-          cam.setAttribute('rotation', rot);
-        }
-
-        document.querySelector('#arrow-v1').addEventListener('click', () => {
-          alignTo(0);          // vidéo 1
-        });
-
-        document.querySelector('#arrow-v2').addEventListener('click', () => {
-          alignTo(-60);        // vidéo 2
-        });
-
-        document.querySelector('#arrow-v3').addEventListener('click', () => {
-          alignTo(60);         // vidéo 3
-        });
-      });
-    </script>
-
-  </body>
+</body>
 </html>
-
-
 
 
 <!--
