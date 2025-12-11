@@ -3,48 +3,21 @@
   <head>
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
 
-    <!-- Composant : lecture/pause au regard -->
+    <!-- Composant générique : joue/stoppe la vidéo liée -->
     <script>
       AFRAME.registerComponent('play-on-look', {
+        schema: {video: {type: 'selector'}},
+
         init: function () {
-          var el = this.el;
-          el.addEventListener('mouseenter', function () {
-            var video = document.querySelector('#video1');
-            if (video) video.play();
+          const vid = this.data.video;
+          const el = this.el;
+
+          el.addEventListener('mouseenter', () => {
+            if (vid) vid.play();
           });
-          el.addEventListener('mouseleave', function () {
-            var video = document.querySelector('#video1');
-            if (video) video.pause();
-          });
-        }
-      });
-    </script>
-        <script>
-      AFRAME.registerComponent('play-on-look', {
-        init: function () {
-          var el = this.el;
-          el.addEventListener('mouseenter', function () {
-            var video = document.querySelector('#video2');
-            if (video) video.play();
-          });
-          el.addEventListener('mouseleave', function () {
-            var video = document.querySelector('#video2');
-            if (video) video.pause();
-          });
-        }
-      });
-    </script>
-        <script>
-      AFRAME.registerComponent('play-on-look', {
-        init: function () {
-          var el = this.el;
-          el.addEventListener('mouseenter', function () {
-            var video = document.querySelector('#video3');
-            if (video) video.play();
-          });
-          el.addEventListener('mouseleave', function () {
-            var video = document.querySelector('#video3');
-            if (video) video.pause();
+
+          el.addEventListener('mouseleave', () => {
+            if (vid) vid.pause();
           });
         }
       });
@@ -53,7 +26,7 @@
 
   <body>
 
-    <!-- Écran pour activer l’audio -->
+    <!-- Écran pour activer le son -->
     <div id="startAudio"
          style="position: fixed; top:0; left:0; width:100%; height:100%;
                 background:black; color:white; display:flex;
@@ -64,113 +37,86 @@
 
     <a-scene>
 
-      <!-- ASSETS -->
       <a-assets>
         <a-asset-item id="table" src="assets/object/classic_round_side_table.glb"></a-asset-item>
         <a-asset-item id="mobile1" src="assets/object/mobile1.glb"></a-asset-item>
         <a-asset-item id="mobile2" src="assets/object/mobile2.glb"></a-asset-item>
         <a-asset-item id="mobile3" src="assets/object/mobile3.glb"></a-asset-item>
 
-        <video id="video1"
-               src="assets/films/Temoin1extra.mp4"
-               playsinline
-               crossorigin="anonymous"
-               muted>
-        </video>
-                <video id="video2"
-               src="assets/films/Temoin2extra.mp4"
-               playsinline
-               crossorigin="anonymous"
-               muted>
-        </video>
-        
-        <video id="video3"
-               src="assets/films/Temoin3extra.mp4"
-               playsinline
-               crossorigin="anonymous"
-               muted>
-        </video>
-
+        <video id="video1" src="assets/films/Temoin1extra.mp4" playsinline crossorigin="anonymous"></video>
+        <video id="video2" src="assets/films/Temoin2extra.mp4" playsinline crossorigin="anonymous"></video>
+        <video id="video3" src="assets/films/Temoin3extra.mp4" playsinline crossorigin="anonymous"></video>
       </a-assets>
 
-      
-
-        <a-entity camera="" look-controls="" position="0.11407 1.67185 4.90269" rotation="-52.368342474957274 -7.333859777674539 0">
-        <a-entity id="cursor" cursor="fuse: true; fuseTimeout: 800" raycaster="objects: .playable" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03" material="shader: flat; color: #ff1111"></a-entity>
-      </a-entity>
-
- 
-      <a-entity id="global"  position="0 0.02018 3.143">
-        <a-entity gltf-model="#table" scale="3 0.21914 3" position="0 0.86799 0"></a-entity>
-        
-
-        <a-entity src="#telephone" position="0 0.33236 0" scale="0.5 0.5 0.5">
-
-          <a-entity gltf-model="#mobile1" scale="0.1 0.08076 0.1" position="-0.05093 1.8343 0.2881" rotation="0 -56.75 0">
-          </a-entity>
-
-          <a-entity gltf-model="#mobile2" scale="0.01 0.01 0.01" position="0.09615 1.87665 -0.0558">
-          </a-entity>
-
-          <a-entity gltf-model="#mobile3" position="0.48662 1.82716 0.40181" scale="0.5 0.5 0.39934" rotation="90 -120.43000000000002 0"></a-entity>
-
-
+      <a-entity camera look-controls position="0 1.6 4.9">
+        <a-entity id="cursor"
+                  cursor="fuse: true; fuseTimeout: 800"
+                  raycaster="objects: .playable"
+                  position="0 0 -1"
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                  material="shader: flat; color: #ff1111">
         </a-entity>
       </a-entity>
 
+      <a-entity id="global" position="0 0.02 3.143">
+        <a-entity gltf-model="#table" scale="3 0.22 3" position="0 0.86 0"></a-entity>
 
-<a-video id="videopanel" class="playable" play-on-look="" src="#video1" width="16" height="9" position="0.04991 1.26538 3.11734" scale="0.01335 0.05344 0.1" <="" a-video=""></a-video>
+        <a-entity position="0 0.33 0" scale="0.5 0.5 0.5">
+          <a-entity gltf-model="#mobile1" scale="0.1 0.08 0.1" position="-0.05 1.83 0.28" rotation="0 -56.7 0"></a-entity>
+          <a-entity gltf-model="#mobile2" scale="0.01 0.01 0.01" position="0.096 1.87 -0.05"></a-entity>
+          <a-entity gltf-model="#mobile3" scale="0.5 0.5 0.39" position="0.48 1.82 0.40" rotation="90 -120 0"></a-entity>
+        </a-entity>
+      </a-entity>
 
-<a-video id="videopanel" class="playable" play-on-look="" src="#video2" width="16" height="9" position="0.15872 1.26538 3.28741" scale="0.01805 0.05344 0.1" <="" a-video="" rotation="0 59.64376055752844 0"></a-video>
+      <!-- Écrans vidéo (tous corrects et indépendants) -->
 
-<a-video id="videopanel" class="playable" play-on-look="" src="#video3" width="16" height="9" position="-0.04379 1.26538 3.29802" scale="0.01734 0.05344 0.1" <="" a-video="" rotation="0 -56.03469940599938 0"></a-video>
+      <a-video id="panel1"
+               class="playable"
+               play-on-look="video: #video1"
+               src="#video1"
+               width="16" height="9"
+               position="0.049 1.26 3.117"
+               scale="0.013 0.053 0.1">
+      </a-video>
 
+      <a-video id="panel2"
+               class="playable"
+               play-on-look="video: #video2"
+               src="#video2"
+               width="16" height="9"
+               position="0.1587 1.265 3.287"
+               rotation="0 59.64 0"
+               scale="0.018 0.053 0.1">
+      </a-video>
+
+      <a-video id="panel3"
+               class="playable"
+               play-on-look="video: #video3"
+               src="#video3"
+               width="16" height="9"
+               position="-0.0437 1.265 3.298"
+               rotation="0 -56.03 0"
+               scale="0.017 0.053 0.1">
+      </a-video>
 
     </a-scene>
 
-
+    <!-- Un seul script pour débloquer l’audio -->
     <script>
       document.querySelector('#startAudio').addEventListener('click', function () {
-        var video = document.querySelector('#video1');
+        ['#video1', '#video2', '#video3'].forEach(id => {
+          const v = document.querySelector(id);
+          v.muted = false;
+          v.play().catch(() => {});
+          v.pause(); // on ne lance pas la vidéo, on débloque juste le son
+        });
 
-        video.muted = false;
-        video.play().catch(() => {});
-
-        document.querySelector('#startAudio').style.display = 'none';
+        this.style.display = 'none';
       });
     </script>
-    <script>
-      document.querySelector('#startAudio').addEventListener('click', function () {
-        var video = document.querySelector('#video2');
 
-        video.muted = false;
-        video.play().catch(() => {});
-
-        document.querySelector('#startAudio').style.display = 'none';
-      });
-    </script>
-        <script>
-      document.querySelector('#startAudio').addEventListener('click', function () {
-        var video = document.querySelector('#video3');
-
-        video.muted = false;
-        video.play().catch(() => {});
-
-        document.querySelector('#startAudio').style.display = 'none';
-      });
-    </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
 
 
 
