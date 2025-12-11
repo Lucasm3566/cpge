@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
-    <script src="./js/aframe.min.js"></script>
-    <script src="./js/mindar-image-aframe.prod.js"></script>
+    <!-- SUPPRIMÉ : pas de double import d'aframe -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
     <!-- Composant générique : joue/stoppe la vidéo liée -->
     <script>
@@ -33,7 +33,13 @@
         Cliquer pour commencer
     </div>
 
-    <a-scene mindar-image="imageTargetSrc: ./assets/targets-cpge.mind; smooth: true; smoothCount: 10;" embedded color-space="sRGB" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene 
+        mindar-image="imageTargetSrc: ./assets/targets-cpge.mind; autoStart: true; uiScanning: auto;" 
+        embedded 
+        color-space="sRGB" 
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false">
+        
         <a-assets>
             <a-asset-item id="table" src="assets/object/classic_round_side_table.glb"></a-asset-item>
             <a-asset-item id="mobile1" src="assets/object/mobile1.glb"></a-asset-item>
@@ -42,14 +48,13 @@
             
             <img id="frise" src="assets/object/frise.jpg">
 
-            <video id="video1" src="assets/films/Temoin1extra.mp4" playsinline crossorigin="anonymous"></video>
-            <video id="video2" src="assets/films/Temoin2extra.mp4" playsinline crossorigin="anonymous"></video>
-            <video id="video3" src="assets/films/Temoin3extra.mp4" playsinline crossorigin="anonymous"></video>
+            <video id="video1" src="assets/films/Temoin1extra.mp4" playsinline crossorigin="anonymous" preload="auto"></video>
+            <video id="video2" src="assets/films/Temoin2extra.mp4" playsinline crossorigin="anonymous" preload="auto"></video>
+            <video id="video3" src="assets/films/Temoin3extra.mp4" playsinline crossorigin="anonymous" preload="auto"></video>
         </a-assets>
-          <a-camera mindar-image-camera></a-camera>
-          <a-entity mindar-image-target="targetIndex: 0">
 
-            <a-entity camera look-controls position="0 1.6 4.41422" rotation="-0.802 -0.573 0">
+        <!-- Caméra avec curseur (EN DEHORS du target) -->
+        <a-entity mindar-image-camera>
             <a-entity id="cursor" 
                       cursor="fuse: true; fuseTimeout: 800" 
                       raycaster="objects: .playable" 
@@ -59,44 +64,75 @@
             </a-entity>
         </a-entity>
 
-        <a-entity id="global" position="0 0.02 3.143">
-            <a-image src="#frise"></a-image>
-            
-            <a-entity gltf-model="assets/object/classic_round_side_table.glb" scale="1.27891 0.23741 1.22012" position="0 0.86 0"></a-entity>
+        <!-- Contenu AR qui apparaît sur le marqueur -->
+        <a-entity mindar-image-target="targetIndex: 0">
+            <a-entity id="global" position="0 0 0">
+                <a-image src="#frise" position="0 0.5 0" scale="1.5 1.5 1"></a-image>
+                
+                <a-entity gltf-model="#table" scale="1.27891 0.23741 1.22012" position="0 0.86 0"></a-entity>
 
-                        <a-entity position="0 0.33 0" scale="0.5 0.5 0.5">
-                            
-                            <a-entity id="tel1+video3">
-                            <a-entity id="telephone1" gltf-model="#mobile1" scale="0.1 0.08 0.1" position="-0.05 1.83 0.28" rotation="0 -56.7 0"></a-entity>
-                                <a-video id="video3" class="playable" play-on-look="video: #video3" src="#video3" width="16" height="9" position="-0.08441 1.798 0.29972" rotation="0 -56.87580144925143 0" scale="0.03417 0.08137 0.1">
+                <a-entity position="0 0.33 0" scale="0.5 0.5 0.5">
+                    
+                    <!-- Téléphone 1 + Vidéo 3 -->
+                    <a-entity id="tel1+video3">
+                        <a-entity id="telephone1" gltf-model="#mobile1" scale="0.1 0.08 0.1" position="-0.05 1.83 0.28" rotation="0 -56.7 0"></a-entity>
+                        <a-video 
+                            class="playable" 
+                            play-on-look="video: #video3" 
+                            src="#video3" 
+                            width="16" 
+                            height="9" 
+                            position="-0.08441 1.798 0.29972" 
+                            rotation="0 -56.87580144925143 0" 
+                            scale="0.03417 0.08137 0.1">
                         </a-video>
-                        </a-entity>
+                    </a-entity>
 
+                    <!-- Téléphone 2 + Vidéo 1 -->
+                    <a-entity id="tel2+video1">
+                        <a-entity id="telephone2" gltf-model="#mobile2" scale="0.01 0.01 0.01" position="0.096 1.87 -0.05"></a-entity>
+                        <a-video 
+                            class="playable" 
+                            play-on-look="video: #video1" 
+                            src="#video1" 
+                            width="16" 
+                            height="9" 
+                            position="0.10304 1.80643 -0.04651" 
+                            scale="0.02967 0.10104 0.1">
+                        </a-video>
+                    </a-entity>
 
-                <a-entity id="tel2+video1">
-                    <a-entity id="telephone2" gltf-model="#mobile2" scale="0.01 0.01 0.01" position="0.096 1.87 -0.05"></a-entity>
-                    <a-video id="video1" class="playable" play-on-look="video: #video1" src="#video1" width="16" height="9" position="0.10304 1.80643 -0.04651" scale="0.02967 0.10104 0.1"></a-video>
+                    <!-- Téléphone 3 + Vidéo 2 -->
+                    <a-entity id="tel3+video2">
+                        <a-entity id="telephone3" gltf-model="#mobile3" scale="0.5 0.5 0.39" position="0.48 1.82 0.40" rotation="90 -120 0"></a-entity>
+                        <a-video 
+                            class="playable" 
+                            play-on-look="video: #video2" 
+                            src="#video2" 
+                            width="16" 
+                            height="9" 
+                            position="0.30405 1.81499 0.30805" 
+                            rotation="0 59.64000000000001 0" 
+                            scale="0.03591 0.10571 0.1">
+                        </a-video>
+                    </a-entity>
                 </a-entity>
-
-
-                <a-entity id="tel3+video2">
-                    <a-entity id="telephone3" gltf-model="#mobile3" scale="0.5 0.5 0.39" position="0.48 1.82 0.40" rotation="90 -120 0"></a-entity>
-                    <a-video id="video2" class="playable" play-on-look="video: #video2" src="#video2" width="16" height="9" position="0.30405 1.81499 0.30805" rotation="0 59.64000000000001 0" scale="0.03591 0.10571 0.1"></a-video>
-                </a-entity>
-            </a-entity>
             </a-entity>
         </a-entity>
-
-
     </a-scene>
 
     <script>
         document.querySelector('#startAudio').addEventListener('click', function () {
             ['#video1', '#video2', '#video3'].forEach(id => {
                 const v = document.querySelector(id);
-                v.muted = false;
-                v.play().catch(() => {});
-                v.pause(); // on ne lance pas la vidéo, on débloque juste le son
+                if (v) {
+                    v.muted = false;
+                    v.play().then(() => {
+                        v.pause(); // on ne lance pas la vidéo, on débloque juste le son
+                    }).catch((err) => {
+                        console.warn('Erreur vidéo:', err);
+                    });
+                }
             });
             this.style.display = 'none';
         });
