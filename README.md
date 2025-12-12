@@ -93,5 +93,5 @@ index.html
 ## Crédits
 
 Projet imaginé, encadré et co-développé par Matthieu Farcot\
-Avec Alexis Paglierusco et Lucas Munsch\
+Avec Alexis Paglierusco et Lucas Munsch (stagiares 1ere Pro CIEL)\
 Lycée Louis de Cormontaigne -- Metz, 2025
