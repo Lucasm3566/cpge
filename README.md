@@ -11,24 +11,24 @@ plusieurs témoignages vidéo lorsque l'utilisateur scanne un flyer dédié.
 ### 1. A-Frame (1.6.0)
 
 Framework WebVR/AR pour créer des scènes 3D en HTML.\
-Utilisé pour :\
-- la scène AR\
-- la caméra\
-- les plans 3D (a-plane)\
+Utilisé pour :
+- la scène AR
+- la caméra
+- les plans 3D (a-plane)
 - la gestion des assets
 
-CDN :\
+CDN :
 https://aframe.io/releases/1.6.0/aframe.min.js
 
 ### 2. MindAR (mindar-image-aframe) -- v1.2.5
 
 Bibliothèque de réalité augmentée pour la reconnaissance d'images.\
-Utilisée pour :\
-- détecter le flyer\
-- afficher la vidéo sur la cible\
+Utilisée pour :
+- détecter le flyer
+- afficher la vidéo sur la cible
 - gérer targetFound / targetLost
 
-CDN :\
+CDN :
 https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js
 
 ### 3. A-Frame Environment Component -- v1.3.7
@@ -36,14 +36,14 @@ https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js
 Extension permettant d'ajouter un environnement 3D et d'améliorer la
 scène.
 
-CDN :\
+CDN :
 https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.7/dist/aframe-environment-component.min.js
 
 ### 4. A-Frame Extras -- v7.5.4
 
 Pack de composants additionnels pour A-Frame.
 
-CDN :\
+CDN :
 https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.4/dist/aframe-extras.min.js
 
 ### 5. HTML5 / CSS3
