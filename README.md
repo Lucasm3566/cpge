@@ -34,25 +34,25 @@ https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js
 
 ### 3. HTML5 / CSS3
 
-Utilisés pour :\
-- la structure de la page\
-- le design des boutons, overlays et modals\
+Utilisés pour :
+- la structure de la page
+- le design des boutons, overlays et modals
 - l'intégration vidéo HTML5
 
 ### 4. JavaScript (Vanilla)
 
-Utilisé pour :\
-- la gestion du changement de vidéos\
-- les événements AR\
-- la lecture/pause automatique\
-- le modal d'informations\
+Utilisé pour :
+- la gestion du changement de vidéos
+- les événements AR
+- la lecture/pause automatique
+- le modal d'informations
 - la mise à jour des boutons et indicateurs
 
 ### 5. Fichiers et assets
 
 -   Vidéos : Temoin1extra.mp4, Temoin2extra.mp4, Temoin3extra.mp4,
-    Chat.mp4\
--   Image : Logo-simplifie-NB.jpg\
+    Chat.mp4
+-   Image : Logo-simplifie-NB.jpg
 -   Cible AR : targets-JPO.mind
 
 ## Compatibilité mobile
