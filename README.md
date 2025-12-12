@@ -80,4 +80,5 @@ index.html
 
 Projet imaginé, encadré et co-développé par Matthieu Farcot\
 Avec Alexis Paglierusco et Lucas Munsch (stagiares 1ere Pro CIEL)\
-Lycée Louis de Cormontaigne -- Metz, 2025
+(c) Lycée Louis de Cormontaigne -- Metz, 2025\
+<b>Merci à Axel, Hélène et Quentin pour leurs témoignages. On vous souhaite le meilleur ;-)</b>
