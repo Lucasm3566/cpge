@@ -44,6 +44,7 @@
         <video id="video2" src="./assets/films/Temoin2extra.mp4" preload="auto" playsinline webkit-playsinline autoplay crossorigin="anonymous"></video>
         <video id="video3" src="./assets/films/Temoin1extra.mp4" preload="auto" playsinline webkit-playsinline autoplay crossorigin="anonymous"></video>
         <img id="logo" src="./assets/object/Logo-simplifie-NB.jpg" />
+        <a-gltf-model id="trombonne" src="assets/object/trombone.glb""></a-gltf-model>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
@@ -51,6 +52,7 @@
       <a-entity mindar-image-target="targetIndex:0">
         <a-plane id="logo-simplified" src="#logo" position="-0.36446 0.45983 0.18071" height="0.15" width="0.25" rotation="15 0 0" material="blending:normal"></a-plane>
         <a-plane id="videoPlane" src="#video1" position="0 0 0" height="1.2" width="1" material="shader:flat"></a-plane>
+        <a-gltf-model id="trombonne" src="#trombonne" scale="6 6 6" position="-0.46508 0.52744 0.00661" rotation="-6.74428620648492 89.89306735146025 -88.61880921508929"></a-gltf-model>
       </a-entity>
     </a-scene>
 
